@@ -1,4 +1,5 @@
 from flask import request, render_template
+from models import user
 from main import app, db
 
 @app.route('/new')
@@ -9,10 +10,10 @@ def user_registration():
 @app.route('/create', methods=['POST'])
 def create_user():
 
-    user = User()
+    user = user.User()
     user.name = request.form['name']
     user.email = request.form['email']
-    user.password = request.form['password']
+    user.password_hash = request.form['password_hash']
     db.session.add(user)
     db.session.commit()
 
