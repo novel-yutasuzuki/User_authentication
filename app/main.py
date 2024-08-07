@@ -1,6 +1,5 @@
 import os
 from flask import Flask
-from flask_login import LoginManager
 from sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -13,6 +12,3 @@ database = os.getenv('DB_HOST')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql+psycopg2://{username}:{password}@{host}/{database}"
 app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
-
-login = LoginManager()
-login.init_app(app)
