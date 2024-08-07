@@ -1,0 +1,6 @@
+flask
+flask-jwt-extended
+uvicorn
+SQLAlchemy
+alembic
+psycopg2-binary
