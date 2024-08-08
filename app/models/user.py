@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from config import Base, engine
+from db import Base, engine
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User (Base):
@@ -20,7 +20,7 @@ class User (Base):
         self.password_hash = generate_password_hash(password)
 
     # 入力されたパスワードが保存されているハッシュ化したパスワードと一致するか比較する
-    # def verify_password(self, password):
-    #     return check_password_hash(self.password_hash, password)
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     Base.metadata.create_all(engine)
