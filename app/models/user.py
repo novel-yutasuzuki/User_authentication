@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String
-from app import main
+from config import Base, engine
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class User (main.Base):
+class User (Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
@@ -23,4 +23,4 @@ class User (main.Base):
     # def verify_password(self, password):
     #     return check_password_hash(self.password_hash, password)
 
-    main.Base.metadata.create_all(main.engine)
+    Base.metadata.create_all(engine)
