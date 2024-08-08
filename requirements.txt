@@ -1,6 +1,6 @@
 flask
 flask-jwt-extended
-uvicorn
+gunicorn
 SQLAlchemy
 alembic
 psycopg2-binary
