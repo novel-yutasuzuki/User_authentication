@@ -5,9 +5,23 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import os
+from db import Base
+
+
+config = context.config
+
+username = os.getenv('DB_USER')
+password = os.getenv('DB_PASSWORD')
+host = os.getenv('DB_HOST')
+database = os.getenv('DB_NAME')
+
+database_url = f"postgresql+psycopg2://{username}:{password}@{host}/{database}"
+
+config.set_main_option("sqlalchemy.url", database_url)
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -18,7 +32,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -63,8 +77,11 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
 
+    url = config.get_main_option("sqlalchemy.url")
+
     with connectable.connect() as connection:
         context.configure(
+            url=url,
             connection=connection, target_metadata=target_metadata
         )
 
