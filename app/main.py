@@ -10,7 +10,7 @@ from typing import Optional, Any, Tuple
 
 app = Flask(__name__)
 
-jwt = JWTManager()
+jwt = JWTManager(app)
 
 @app.route('/create', methods=['POST'])
 def create_user():
@@ -43,8 +43,7 @@ def authenticate() -> Tuple[Response, int]:
     print(user_name_to_auth, email_to_auth, password_to_auth)
 
     user = session.query(User).filter(User.name == user_name_to_auth)\
-        .filter(User.email == email_to_auth)\
-        .filter(User.password_hash == password_to_auth).one_or_none()
+        .filter(User.email == email_to_auth).one_or_none()
     # Userテーブルに入力された各カラムの入力値と一致するデータがあるか比較し、あればuser変数に代入しなければnoneを返す
     print(user)
     if user and check_password_hash(user.password_hash, password_to_auth):
