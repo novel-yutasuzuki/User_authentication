@@ -8,6 +8,8 @@ from alembic import context
 import os
 from db import Base
 
+from models.user import User
+from models.todo import Todo
 
 config = context.config
 

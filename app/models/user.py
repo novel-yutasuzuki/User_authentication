@@ -18,7 +18,3 @@ class User (Base):
     @password.setter
     def password(self, password):
         self.password_hash = generate_password_hash(password)
-
-    # 入力されたパスワードが保存されているハッシュ化したパスワードと一致するか比較する
-    # def verify_password(self, password):
-    #     return check_password_hash(self.password_hash, password)
