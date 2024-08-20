@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify, make_response, Response
 from models.user import User
+from models.todo import Todo
 from db import SessionLocal, session
 from flask_jwt_extended import JWTManager
-from flask_jwt_extended import (create_access_token, set_access_cookies)
+from flask_jwt_extended import create_access_token, set_access_cookies
 from werkzeug.security import check_password_hash
 from typing import Optional, Any, Tuple
 import os
@@ -15,7 +16,6 @@ jwt = JWTManager(app)
 
 @app.route('/registration', methods=['POST'])
 def registration_user():
-    session = SessionLocal()
     try:
         new_user = User()
         new_user.name = request.json['name']
@@ -41,7 +41,7 @@ def authenticate() -> Tuple[Response, int]:
     if user and check_password_hash(user.password_hash, password_to_auth):
         # app.logger.info('login succeeded')
         access_token = create_access_token(
-            identity={'name': user.name, 'email': user.email})
+            identity={'id': user.id, 'name': user.name, 'email': user.email})
         response = make_response("Login Success")
         set_access_cookies(response, access_token)
         return response, 200
@@ -49,15 +49,31 @@ def authenticate() -> Tuple[Response, int]:
         # app.logger.info('login failed')
         return jsonify({'msg': 'Wrong login id or password.'}), 401
     
-# @app.route('/')
-# def todo_list():
-#     user_id = current_user.id
-#     todo_list = Todo.query.filter_by(user_id = user_id).all()
+@app.route('/')
+def todo_list():
+    user_id = current_user.id
 
-# @app.route('/create')
-# def create_todo():
-#     new_todo = Todo()
-#     new_todo.title = request.json['title']
+# current_userでは無く、トークンから取得
+
+    todo_list = Todo.query.filter_by(user_id = user_id).all()
+
+    def todo_to_dict(todo):
+        return {
+            'id': todo.id,
+            'title': todo.title
+        }
+    
+    todo_list_dict = [todo_to_dict(todo) for todo in todos]
+
+    return jsonify(todo_list_dict)
+
+@app.route('/create', methods=['POST'])
+def create_todo():
+    new_todo = Todo()
+    new_todo.title = request.json['title']
+    session.add(new_todo)
+    session.commit()
+    return jsonify({'msg': 'New creation succeeded'})
 
 if __name__ == "__main__":
     app.run(debug=True)
